@@ -1,0 +1,164 @@
+dialog.form-dialog {
+  position: fixed;
+  inset: 0;
+  margin: auto;
+  width: min(500px, calc(100% - 32px));
+  max-height: calc(100vh - 48px);
+  padding: 20px;
+  border: 0;
+  border-radius: 12px;
+  background: #fff;
+  color: #1a1d2e;
+  overflow-y: auto;
+  box-shadow: 0 10px 30px rgba(0,0,0,.1);
+  font: 14px 'Inter', sans-serif;
+}
+
+dialog.form-dialog:not([open]) {
+  display: none;
+}
+
+dialog.form-dialog::backdrop {
+  background: rgba(0,0,0,.5);
+}
+
+#movieEditor {
+  width: min(900px, calc(100% - 32px));
+}
+
+.form-dialog .dialog-close {
+  position: absolute;
+  right: 16px;
+  top: 12px;
+  padding: 4px 8px;
+  font-size: 24px;
+  color: #5c6378;
+  background: transparent;
+}
+
+.form-dialog h2, .form-dialog h3 {
+  margin: 0 32px 20px 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #1a1d2e;
+}
+
+#movieEditor .movie-card {
+  margin: 0;
+  padding: 0;
+  box-shadow: none;
+  border: 0;
+}
+
+.form-dialog label {
+  color: #5c6378;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.form-dialog input:not([type="checkbox"]):not([type="file"]), .form-dialog select, .form-dialog textarea {
+  width: 100%;
+  min-width: 0;
+  padding: 10px 12px;
+  border: 1px solid #e4e7f0;
+  border-radius: 8px;
+  font: inherit;
+  color: #1a1d2e;
+  background: #fff;
+}
+
+.form-dialog input:focus-visible, .form-dialog select:focus-visible, .form-dialog textarea:focus-visible, .form-dialog button:focus-visible {
+  outline: 2px solid #d32f2f;
+  outline-offset: 2px;
+}
+
+.form-dialog .movie-form-actions, .form-dialog .genre-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.form-dialog .movie-form-actions button, .form-dialog .genre-form-actions button, #screeningEditor form > div:last-child button {
+  height: 34px;
+  padding: 0 16px;
+  border-radius: 8px;
+  font: 600 14px 'Inter', sans-serif;
+}
+
+.form-dialog .primary, #movieSubmit {
+  background: #e02020;
+  color: #fff;
+}
+
+.form-dialog .movie-cancel, .form-dialog .genre-cancel, #screeningEditor #movieReset {
+  background: #f5f5f5;
+  color: #1a1d2e;
+}
+
+#screeningEditor form > div {
+  margin: 0 0 16px;
+}
+
+#screeningEditor label {
+  display: block;
+  margin-bottom: 6px;
+}
+
+#screeningEditor form > div:last-child {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin: 24px 0 0;
+}
+
+#product-modal {
+  padding: 0;
+}
+
+#product-modal .modal-content {
+  width: 100%;
+  max-width: none;
+  max-height: none;
+  box-shadow: none;
+  animation: none;
+}
+
+#genresPage dialog.genre-card {
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.1);
+}
+
+#genresPage .genre-form-actions, #movieEditor .movie-form-actions {
+  gap: 12px;
+  margin-top: 24px;
+}
+
+#mainContent .form-dialog .primary, #mainContent .form-dialog .movie-cancel, #genresPage .form-dialog .genre-cancel {
+  height: 34px;
+  padding: 0 16px;
+  border-radius: 8px;
+  font: 600 14px 'Inter', sans-serif;
+}
+
+#mainContent .form-dialog .movie-cancel, #genresPage .form-dialog .genre-cancel {
+  background: #f5f5f5;
+  color: #1a1d2e;
+}
+
+#genreForm input, #genreForm textarea {
+  border-color: #e4e7f0;
+  border-radius: 8px;
+  padding: 10px 12px;
+  color: #1a1d2e;
+}
+
+html:has(dialog.form-dialog[open]), html:has(dialog.form-dialog[open]) body {
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+
+dialog.form-dialog, #product-modal .modal-content {
+  overscroll-behavior: contain;
+}

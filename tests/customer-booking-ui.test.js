@@ -1,0 +1,61 @@
+const assert = require('node:assert/strict');
+const {chromium} = require('playwright');
+(async () => {
+  const browser = await chromium.launch({headless:true,...(process.env.CHROME_PATH ? {executablePath:process.env.CHROME_PATH} : {})});
+  try {
+    const context = await browser.newContext({viewport:{width:1440,height:1000},timezoneId:'Asia/Ho_Chi_Minh'});
+    const page = await context.newPage();
+    const root = process.env.BASE_URL || 'http://127.0.0.1:8000';
+    await page.goto(root+'/movies/detail/?id=5');
+    await page.locator('.showtime-link').first().click();
+    const bookingUrl = page.url();
+    assert.equal(await page.locator('.seat-button').count(),124);
+    assert(await page.locator('.account-links').getByRole('link',{name:'Đăng nhập',exact:true}).isVisible());
+    await page.locator('[data-seat="H12"]').click();
+    await page.locator('[data-seat="H11"]').click();
+    await page.getByRole('button',{name:'Thanh toán',exact:true}).click();
+    assert(await page.getByRole('heading',{name:'Thông tin thanh toán',exact:true}).isVisible());
+    assert(await page.getByRole('radio',{name:'VNPay',exact:true}).isChecked(), 'VNPay is selected by default');
+    assert.equal(await page.getByText('Khuyến mãi',{exact:true}).count(),0);
+    assert.equal(await page.getByText('Giảm giá',{exact:false}).count(),0);
+    for (const name of ['VNPay','MoMo','Thẻ quốc tế']) assert(await page.getByRole('radio',{name,exact:true}).isVisible());
+    await page.getByRole('radio',{name:'Thẻ quốc tế',exact:true}).check();
+    await page.getByRole('checkbox').check();
+    await page.getByRole('button',{name:'Xác nhận thanh toán demo',exact:true}).click();
+    await page.waitForURL('**/login/?next=*');
+    await page.locator('.auth-switch a').click();
+    await page.getByLabel('Họ và tên',{exact:true}).fill('Khách Kiểm thử');
+    await page.getByLabel('Số điện thoại').fill('0900000000');
+    await page.getByLabel('Email',{exact:true}).fill('booking-ui@example.com');
+    await page.getByLabel('Mật khẩu',{exact:true}).fill('demoPass123');
+    await page.getByLabel('Nhập lại mật khẩu',{exact:true}).fill('demoPass123');
+    await page.getByRole('checkbox').check();
+    await page.getByRole('button',{name:'Đăng ký',exact:true}).click();
+    await page.waitForURL(bookingUrl);
+    await page.locator('#payment-form').waitFor();
+    assert(await page.getByRole('radio',{name:'Thẻ quốc tế',exact:true}).isChecked());
+    assert.match(await page.locator('.booking-details').innerText(),/H12, H11/);
+    const competing = await context.newPage();
+    await competing.goto(bookingUrl);
+    await competing.locator('[data-seat="H12"]').click();
+    await competing.getByRole('button',{name:'Thanh toán',exact:true}).click();
+    await page.getByRole('button',{name:'Xác nhận thanh toán demo',exact:true}).click();
+    await page.getByRole('heading',{name:'Đặt vé thành công',exact:true}).waitFor();
+    const code = await page.locator('.receipt-code').innerText();
+    await competing.locator('[data-seat="H12"]:disabled').waitFor();
+    await page.reload();
+    assert.equal(await page.locator('.receipt-code').innerText(),code);
+    await page.goto(root+'/admin/booking/');
+    await page.getByLabel('Tên tài khoản').fill('utcadmin');
+    await page.getByLabel('Mật khẩu').fill('12345678');
+    await page.getByRole('button',{name:'Đăng nhập',exact:true}).click();
+    await page.locator('#bookingRows').waitFor();
+    assert(await page.getByRole('link',{name:code,exact:true}).isVisible());
+    for (const width of [390,768]) {
+      await competing.setViewportSize({width,height:844});
+      await competing.goto(bookingUrl);
+      assert(await competing.evaluate(()=>document.documentElement.scrollWidth<=innerWidth));
+    }
+    console.log('Booking UI checks passed: guest selection, auth at checkout, restored draft, payment methods, reservation, receipt and admin.');
+  } finally {await browser.close();}
+})().catch(error=>{console.error(error);process.exitCode=1;});

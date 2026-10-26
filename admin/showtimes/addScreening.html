@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <link rel="icon" href="/assets/ucc/logo.png" type="image/png">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hệ thống Quản lý Rạp Chiếu Phim</title>
+  <link rel="stylesheet" href="../styles.css?v=admin-shell-20261019">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="addScreening.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="admin-page">
+<div class="main-wrapper">
+    <main class="content" id="mainContent">
+    <!-- nội dung trang ở đây -->
+     <section>
+          <article>
+            <form id="screeningForm">
+            <div>
+                <h2>Thêm suất chiếu mới</h2>
+            </div>
+            <div>
+                <label for="movieSelect">Phim:</label>
+                <select id="movieSelect" required>
+                    <option value="">Chọn phim</option>
+                </select>
+            </div>
+                <label for="roomSelect">Phòng chiếu:</label>
+                <select id="roomSelect" required>
+                    <option value="">Chọn phòng</option>
+                </select>
+            <div class="input">
+                <label for="showDate">Ngày chiếu:</label>
+                <input type="date" id="showDate" required>
+            </div>
+            <div class="input">
+                <label for="showTime">Giờ chiếu:</label>
+                <input type="time" id="showTime" required>
+            </div>
+            <div class="input">
+                <label for="ticketPrice">Giá vé:</label>
+                <input type="number" id="ticketPrice" placeholder="Nhập giá vé" min="0" step="1000" required>
+            </div>
+            <div>
+                <button type="submit" id="movieSubmit">Tạo mới</button>
+                <button type="button" id="movieReset">Hủy</button>
+            </div>
+            </form>
+          </article>
+     </section>
+    </main>
+
+</div>
+<script src="../app.js?v=rooms-20261019"></script>
+<script src="../../shared-state.js?v=my-tickets-20261020"></script>
+<script src="app.js?v=rooms-20261019"></script>
+</body>
+</html>

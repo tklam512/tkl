@@ -1,0 +1,116 @@
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 8px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+article#header {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  min-height: 42px;
+  margin: 4px 0 24px;
+}
+
+article#header h2 {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+button#add {
+  background-color: var(--accent);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button#add:hover {
+  background-color: var(--accent-hover);
+  transition: var(--transition);
+}
+
+button#resetFilter {
+  background-color: var(--text-secondary);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 180px;
+}
+
+button#resetFilter:hover {
+  background-color: var(--text-primary);
+  transition: var(--transition);
+}
+
+article#filter {
+  display: flex;
+  align-items: flex-end;
+  gap: 20px;
+  background-color: var(--sidebar-bg);
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow-sidebar);
+}
+
+label {
+  font-weight: bold;
+  color: var(--text-primary);
+  margin-bottom: 5px;
+}
+
+div.filterSelections {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+input, select {
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background-color: var(--input-bg);
+  color: var(--text-muted);
+  min-width: 150px;
+}
+
+article#table {
+  display: flex;
+  align-items: flex-end;
+  gap: 20px;
+  background-color: var(--sidebar-bg);
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow-sidebar);
+}
+
+button#add {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 42px;
+  padding: 0 18px;
+  border: none;
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+}

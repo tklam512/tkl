@@ -1,0 +1,130 @@
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #f0f2f7;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  margin: 0;
+}
+
+.main-wrapper {
+  display: flex;
+  align-items: center;
+}
+
+main {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 1536px;
+  padding: 24px 28px;
+}
+
+.stats-container {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.stat-card {
+  position: relative;
+  overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-left: none;
+  border-radius: 8px;
+  box-sizing: border-box;
+  min-height: 140px;
+  padding: 28px 32px;
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.overview-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.overview-header h1 {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 700;
+  color: #1a1d2e;
+  line-height: 1.2;
+}
+
+.overview-header h1 span {
+  color: #d32f2f;
+}
+
+.overview-header time {
+  font: inherit;
+  font-weight: 700;
+  color: #333333;
+}
+
+a.stat-card:hover, a.stat-card:focus-visible {
+  outline: 2px solid #d32f2f;
+  outline-offset: 2px;
+}
+
+.stat-icon {
+  font-size: 42px;
+  color: #d32f2f;
+  margin-right: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stat-content {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.stat-title {
+  font-size: 18px;
+  color: #6c757d;
+  margin-bottom: 4px;
+  font-weight: 500;
+}
+
+.stat-number {
+  font-size: 36px;
+  font-weight: bold;
+  color: #333333;
+}
+
+.stat-watermark {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  right: 20px;
+  font-size: 90px;
+  color: #d32f2f;
+  opacity: 0.15;
+  pointer-events: none;
+}
+
+@media (max-width: 520px) {
+  main {
+    padding: 24px 16px;
+  }
+
+  .stat-card {
+    padding: 24px;
+  }
+
+  .stats-container {
+    grid-template-columns: 1fr;
+  }
+}

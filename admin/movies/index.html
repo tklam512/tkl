@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <link rel="icon" href="/assets/ucc/logo.png" type="image/png">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hệ thống Quản lý Rạp Chiếu Phim</title>
+  <link rel="stylesheet" href="../styles.css?v=admin-shell-20261019">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="movies.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../form-dialog.css">
+  <link rel="stylesheet" href="../control.css">
+</head>
+<body class="admin-page">
+<div class="main-wrapper">
+
+  <main class="content" id="mainContent">
+    <section id="movieList">
+        <div class="heading">
+            <h2>Quản lý phim</h2>
+            <button class="primary" id="add"><i class="bi bi-plus-lg" aria-hidden="true"></i> Thêm phim mới</button>
+        </div>
+        <div class="filters">
+            <div class="search-box">
+              <i class="bi bi-search" aria-hidden="true"></i>
+              <input id="search" placeholder="Tìm kiếm phim..." aria-label="Tìm kiếm phim" class="control">
+            </div>
+            <select id="filter" aria-label="Lọc trạng thái" class="control">
+                <option value="">Tất cả trạng thái</option>
+                <option value="showing">Đang chiếu</option> 
+                <option value="soon">Sắp chiếu</option>
+                <option value="ended">Ngừng chiếu</option>
+            </select>
+        </div>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                      <th>Ảnh</th>
+                      <th>Tên phim</th>
+                      <th>Thể loại</th>
+                      <th>Thời lượng</th>
+                      <th>Ngày khởi chiếu</th>
+                      <th>Trạng thái</th>
+                      <th>Đánh giá</th>
+                      <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody id="movies"></tbody>
+            </table>
+        </div>
+    </section>
+    <dialog id="movieEditor" class="form-dialog" aria-labelledby="form-title">
+<button type="button" class="dialog-close" aria-label="Đóng" onclick="document.getElementById('cancel').click()">×</button>
+      <div class="movie-card">
+        <h2 id="form-title">Thêm phim mới</h2>
+        <form id="movie-form">
+        <label>Tên phim<input name="title" required maxlength="100"></label>
+        <label>Tên phim (Tiếng Anh)<input name="subtitle"></label>
+      <div class="movie-grid three">
+        <label>
+          Thời lượng (phút)
+        <input name="duration" type="number" min="1" max="600" required>
+        </label>
+
+        <label>
+          Ngày khởi chiếu
+          <input name="date" type="date" required>
+        </label>
+
+        <label>
+          Ngày kết thúc
+          <input name="endDate" type="date">
+        </label>
+      </div>
+
+      <div class="movie-grid two">
+        <div>
+          <label for="posterFile">Ảnh Poster</label>
+          <div id="posterDrop" class="image-drop">
+            <input id="posterFile" type="file" accept="image/jpeg,image/png,image/gif" aria-describedby="posterHelp">
+            <small id="posterHelp">Kéo thả ảnh vào đây hoặc chọn file. JPG, PNG hoặc GIF, tối đa 5MB.</small>
+          </div>
+
+          <div id="posterPreviewBox" hidden>
+            <img id="posterPreview" alt="Ảnh poster xem trước">
+            <button id="removePoster" type="button">Xóa ảnh</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="movie-grid three">
+        <label>
+          Độ tuổi
+          <select name="age">
+            <option value="">Chọn độ tuổi</option>
+            <option value="P">P - Mọi lứa tuổi</option>
+            <option value="K">K - Có người lớn đi cùng</option>
+            <option value="T13">T13 - Từ 13 tuổi</option>
+            <option value="T16">T16 - Từ 16 tuổi</option>
+            <option value="T18">T18 - Từ 18 tuổi</option>
+          </select>
+        </label>
+
+        <label>Ngôn ngữ<input name="language"></label>
+
+        <label>Phụ đề<input name="subtitles"></label>
+      </div>
+
+      <label>
+        Trạng thái (tự cập nhật theo suất chiếu)
+        <select name="status" disabled>
+          <option value="showing">Đang chiếu</option>
+          <option value="soon">Sắp chiếu</option>
+          <option value="ended">Ngừng chiếu</option>
+        </select>
+      </label>
+
+      <div>
+        <p>Thể loại </p>
+        <div id="movieGenreOptions"></div>
+      </div>
+
+      <div class="selected-genres">
+        <p>Đã chọn (<span id="selectedGenreCount">0</span>):</p>
+        <div class="tags" id="selectedGenreTags"></div>
+      </div>
+
+      <div class="movie-form-actions">
+        <button class="primary" type="submit" id="saveMovie">
+          Tạo mới
+        </button>
+
+        <button class="movie-cancel" type="button" id="cancel">
+          Hủy
+        </button>
+      </div>
+    </form>
+  </div>
+</dialog>
+  </main>
+
+
+</div>
+<script src="../app.js?v=rooms-20261019"></script>
+<script src="../../shared-state.js?v=my-tickets-20261020"></script>
+<script src="app.js?v=admin-shell-20261019"></script>
+<script src="../form-dialog.js"></script>
+</body>
+</html>

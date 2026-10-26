@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <link rel="icon" href="/assets/ucc/logo.png" type="image/png">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hệ thống Quản lý Rạp Chiếu Phim</title>
+  <link rel="stylesheet" href="../styles.css?v=admin-shell-20261019">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="genres.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../form-dialog.css">
+  <link rel="stylesheet" href="../control.css">
+</head>
+<body class="admin-page">
+<div class="main-wrapper">
+  <main class="content" id="mainContent">
+    <section id="genresPage"> 
+      <p id="genreNotice" role="status"></p>
+      <div class="heading">
+        <h2>Quản lý thể loại phim</h2>
+        <button class="primary" id="addGenre" type="button"><i class="bi bi-plus-lg" aria-hidden="true"></i> Thêm thể loại mới</button>
+      </div>
+      <div id="genresList">
+        <div class="filters">
+          <div class="search-box">
+              <i class="bi bi-search" aria-hidden="true"></i>
+              <input id="genreSearch" type="search" placeholder="Tìm kiếm thể loại..." aria-label="Tìm kiếm thể loại" class="control">
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table class="genres-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Tên thể loại</th>
+                <th>Mô tả</th>
+                <th>Thao tác</th>
+              </tr>
+            </thead>
+            <tbody id="genresTable"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <dialog class="genre-card form-dialog" id="genreEditor" aria-labelledby="genreFormTitle">
+<button type="button" class="dialog-close" aria-label="Đóng" onclick="document.getElementById('cancelGenre').click()">×</button>
+        <h3 id="genreFormTitle">Thêm thể loại</h3>
+
+        <form id="genreForm">
+          <label for="genreName">Tên thể loại</label>
+          <input id="genreName" required maxlength="100">
+
+          <label for="genreDescription">Mô tả</label>
+          <textarea id="genreDescription" rows="4" maxlength="1000"></textarea>
+
+          <div class="genre-form-actions">
+            <button class="primary" id="saveGenre" type="submit">Thêm mới</button>
+            <button class="genre-cancel" id="cancelGenre" type="button">Hủy</button>
+          </div>
+        </form>
+      </dialog>
+    </section>
+  </main>
+
+</div>
+<script src="../app.js?v=rooms-20261019"></script>
+<script src="../../shared-state.js?v=my-tickets-20261020"></script>
+<script src="../movies/app.js?v=admin-shell-20261019"></script>
+<script src="../form-dialog.js"></script>
+</body>
+</html>

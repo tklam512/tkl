@@ -1,0 +1,362 @@
+.content {
+  max-width: 1536px;
+  margin: 0 auto;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  min-height: 42px;
+  margin: 4px 0 24px;
+}
+
+.page-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+  line-height: 1.2;
+}
+
+.btn {
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 14px;
+  transition: var(--transition);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: white;
+}
+
+.btn-primary:hover {
+  background: var(--accent-hover);
+}
+
+.btn-secondary {
+  background: rgba(0,0,0,0.05);
+  color: var(--text-primary);
+}
+
+.btn-icon {
+  padding: 6px;
+  border-radius: 6px;
+  background: rgba(0,0,0,0.05);
+  color: var(--text-secondary);
+  transition: var(--transition);
+}
+
+.btn-icon:hover {
+  background: var(--accent);
+  color: white;
+}
+
+.btn-icon.delete:hover {
+  background: #dc3545;
+}
+
+/* Cards & Tables */
+.card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+  overflow: hidden;
+}
+
+.card-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  gap: 30px;
+  align-items: center;
+}
+
+.search-box {
+  display: flex;
+  align-items: center;
+  background: var(--bg-primary);
+  border-radius: 8px;
+  padding: 0 12px;
+  width: 300px;
+}
+
+.search-box i {
+  color: var(--text-muted);
+  margin-right: 8px;
+}
+
+.search-box input {
+  border: none;
+  background: transparent;
+  outline: none;
+  width: 100%;
+  font-family: inherit;
+  font-size: 14px;
+}
+
+.filter-box select {
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  outline: none;
+  font-family: inherit;
+  font-size: 14px;
+  color: var(--text-primary);
+}
+
+.data-table {
+  width: 100%;
+  min-width: 760px;
+  border-collapse: collapse;
+}
+
+.card-body {
+  overflow-x: auto;
+}
+
+.data-table th, .data-table td {
+  padding: 12px 20px;
+  text-align: left;
+  font-size: 14px;
+}
+
+.data-table th {
+  font-weight: 600;
+  color: var(--text-secondary);
+  border-bottom: 2px solid var(--border);
+}
+
+.data-table td {
+  border-bottom: 1px solid var(--border);
+  color: var(--text-primary);
+  vertical-align: middle;
+}
+
+.data-table tbody tr:hover {
+  background: rgba(0,0,0,0.01);
+}
+
+/* Thành phần giao diện đặc thù sản phẩm */
+.product-img {
+  width: 50px;
+  height: 50px;
+  border-radius: 8px;
+  object-fit: cover;
+  border: 1px solid var(--border);
+}
+
+.status-badge {
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.status-active {
+  background: rgba(40, 167, 69, 0.1);
+  color: #28a745;
+}
+
+.status-inactive {
+  background: rgba(220, 53, 69, 0.1);
+  color: #dc3545;
+}
+
+.action-group {
+  display: flex;
+  gap: 8px;
+}
+
+/* Modal */
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  z-index: 9999;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal.show {
+  display: flex;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 12px;
+  width: 500px;
+  max-width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  animation: modalSlideIn 0.3s ease;
+}
+
+@keyframes modalSlideIn {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.modal-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-header h3 {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.close {
+  font-size: 24px;
+  color: var(--text-secondary);
+  cursor: pointer;
+  line-height: 1;
+}
+
+.modal-body {
+  padding: 20px;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-group.row {
+  display: flex;
+  gap: 16px;
+}
+
+.form-group.row .col {
+  flex: 1;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.form-group input, .form-group select, .form-group textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 14px;
+  transition: border-color var(--transition);
+  outline: none;
+}
+
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+  border-color: var(--accent);
+}
+
+.modal-footer {
+  margin-top: 24px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+@media (max-width: 720px) {
+  .page-header, .card-header {
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .search-box {
+    width: 100%;
+  }
+
+  .form-group.row .col {
+    min-width: 0;
+  }
+}
+
+#btn-add-product {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 42px;
+  padding: 0 18px;
+  border: none;
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+#product-modal .image-drop {
+  padding: 12px;
+  border: 1px dashed #d5d8e0;
+  border-radius: 8px;
+}
+
+#product-modal .image-drop.is-dragging {
+  border-color: #d72c2c;
+  background: #fff3f3;
+}
+
+#product-modal input[type="file"] {
+  padding: 0;
+  border: 0;
+  max-width: 100%;
+}
+
+#product-modal input[type="file"]::file-selector-button {
+  padding: 8px 12px;
+  margin-right: 10px;
+  border: 0;
+  border-radius: 6px;
+  background: #d72c2c;
+  color: white;
+  font: inherit;
+  cursor: pointer;
+}
+
+#product-modal input[type="file"]::file-selector-button:hover {
+  background: #b92222;
+}
+
+#product-modal .image-drop small {
+  display: block;
+  margin-top: 8px;
+  color: #687083;
+  font-size: 12px;
+}
+
+#product-image-preview {
+  margin-top: 10px;
+  width: 80px;
+  height: 80px;
+}
+
+#product-image-preview[hidden] {
+  display: none;
+}

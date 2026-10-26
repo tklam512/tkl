@@ -1,0 +1,301 @@
+:root {
+  --bg-primary: #f0f2f7;
+  --text-primary: #1a1d2e;
+  --border: #e4e7f0;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 15px;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  min-height: 100vh;
+  display: block;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-family: inherit;
+}
+
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+
+.content {
+  padding: 24px 28px;
+}
+
+/* movies*/
+/* Nội dung quản lý phim */
+#mainContent {
+  padding: 24px 28px;
+  max-width: 1536px;
+  margin: 0 auto;
+  color: #344454;
+}
+
+#mainContent .heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 16px;
+  min-height: 42px;
+  margin: 4px 0 24px;
+}
+
+#mainContent .heading h2 {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+#mainContent .heading .primary {
+  height: 42px;
+  padding-block: 0;
+}
+
+#genreNotice:empty {
+  display: none;
+}
+
+#mainContent button,
+#mainContent input {
+  font: inherit;
+}
+
+#mainContent button {
+  cursor: pointer;
+  border: none;
+  border-radius: 5px;
+}
+
+#mainContent .primary {
+  padding: 14px 22px;
+  background: #d32f2f;
+  color: white;
+  font-weight: 600;
+}
+
+/* Tìm kiếm và lọc */
+#mainContent .filters {
+  display: flex;
+  gap: 16px;
+  padding: 24px;
+  margin-bottom: 30px;
+  background: white;
+  border-radius: 9px;
+  box-shadow: 0 2px 5px rgb(0 0 0 / 6%);
+}
+
+#mainContent .table-wrap {
+  overflow-x: auto;
+  background: white;
+  border-radius: 8px;
+}
+
+#mainContent table {
+  width: 100%;
+  min-width: 1050px;
+  border-collapse: collapse;
+}
+
+#mainContent th,
+#mainContent td {
+  padding: 18px 14px;
+  text-align: left;
+  vertical-align: middle;
+  border-bottom: 1px solid #e6e9eb;
+}
+
+#mainContent th {
+  background: #f8f9fa;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+#mainContent td {
+  height: 150px;
+  font-size: 14px;
+}
+
+#mainContent th:nth-child(3) {
+  width: 28%;
+}
+
+#mainContent tbody tr:hover {
+  background: #fafbfd;
+}
+
+#mainContent .actions {
+  white-space: nowrap;
+}
+
+#mainContent .empty {
+  text-align: center;
+  color: #888;
+}
+
+@media (max-width: 768px) {
+  #mainContent {
+    padding: 20px 16px;
+  }
+
+  #mainContent .heading h2 {
+    font-size: 21px;
+  }
+
+  #mainContent .primary {
+    padding: 12px 14px;
+    font-size: 13px;
+  }
+
+  #mainContent .filters {
+    flex-direction: column;
+    padding: 18px;
+  }
+}
+
+#genresPage [hidden] {
+  display: none !important;
+}
+
+#mainContent #genresPage .genres-table {
+  min-width: 650px;
+}
+
+#mainContent #genresPage .genres-table td {
+  height: auto;
+  padding: 20px 14px;
+}
+
+#mainContent #genresPage .genres-table th:nth-child(1) {
+  width: 60px;
+}
+
+#mainContent #genresPage .genres-table th:nth-child(2) {
+  width: 24%;
+}
+
+#mainContent #genresPage .genres-table th:nth-child(3) {
+  width: auto;
+}
+
+#mainContent #genresPage .genres-table th:nth-child(4) {
+  width: 130px;
+}
+
+#genresPage .genre-name {
+  font-weight: 700;
+  color: #222;
+}
+
+#genresPage .genre-card {
+  padding: 26px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgb(0 0 0 / 6%);
+}
+
+#genresPage .genre-card h3 {
+  margin-bottom: 22px;
+  font-size: 18px;
+}
+
+#genreForm {
+  display: grid;
+  gap: 10px;
+}
+
+#genreForm label {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+#genreForm input,
+#genreForm textarea {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: white;
+  color: #344454;
+  font: inherit;
+  min-height: 120px;
+  resize: vertical;
+}
+
+#genreForm input:focus,
+#genreForm textarea:focus {
+  outline: 2px solid #9fc3df;
+  outline-offset: 1px;
+}
+
+#genresPage .genre-form-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+#genresPage .genre-cancel {
+  padding: 14px 22px;
+  border-radius: 5px;
+  background: #78818a;
+  color: white;
+}
+
+#genreNotice {
+  margin-top: 16px;
+  color: #278044;
+  font-size: 14px;
+}
+
+@media (max-width: 768px) {
+  #genresPage #genreSearch {
+    width: 100%;
+  }
+
+  #genresPage .genre-card {
+    padding: 18px;
+  }
+}
+
+#mainContent .heading #addGenre {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 42px;
+  padding: 0 18px;
+  border: none;
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+}

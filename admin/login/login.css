@@ -1,0 +1,112 @@
+body {
+  --accent: #c72d39;
+  --accent-hover: #ae2631;
+}
+
+.admin-login-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  width: min(1200px, calc(100% - 64px));
+  margin-inline: auto;
+  padding-block: 24px;
+}
+
+.admin-brand {
+  display: block;
+  width: 160px;
+  height: 56px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.admin-brand img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(1.4);
+}
+
+.return-link,
+.admin-login-note,
+.admin-login-footer {
+  color: var(--muted);
+}
+
+.return-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+}
+
+.return-link:hover,
+.skip-link:hover {
+  color: var(--text);
+}
+
+.admin-login-main {
+  flex: 1;
+  display: grid;
+  place-items: center;
+  padding: 56px 24px 80px;
+}
+
+.auth-panel {
+  width: 100%;
+  max-width: 440px;
+}
+
+.auth-intro {
+  font-size: 13px;
+  margin-bottom: 36px;
+}
+
+.field-error,
+.login-error {
+  display: none;
+  color: #f4a6a6;
+  font-size: 12px;
+}
+
+.auth-panel input:not([type=checkbox]):not(:placeholder-shown):invalid {
+  border-color: var(--accent);
+}
+
+input:not(:placeholder-shown):invalid ~ .field-error {
+  display: block;
+}
+
+.admin-login-note {
+  margin-top: 24px;
+  text-align: center;
+  font-size: 12px;
+}
+
+.admin-login-footer {
+  text-align: center;
+  padding: 0 24px 24px;
+  font-size: 12px;
+}
+
+@media (max-width: 640px) {
+  .admin-login-header {
+    width: calc(100% - 40px);
+    padding-block: 16px;
+    gap: 12px;
+  }
+
+  .admin-login-main {
+    padding: 40px 24px 56px;
+  }
+
+  .auth-panel h1 {
+    font-size: 25px;
+  }
+
+  .auth-panel label:not(.checkbox-label),
+  .auth-intro,
+  .return-link {
+    font-size: 14px;
+  }
+}

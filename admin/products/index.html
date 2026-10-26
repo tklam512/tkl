@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <link rel="icon" href="/assets/ucc/logo.png" type="image/png">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quản lý Sản phẩm</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css?v=admin-shell-20261019">
+  <link rel="stylesheet" href="./products.css">
+  <link rel="stylesheet" href="../form-dialog.css">
+  <link rel="stylesheet" href="../control.css">
+</head>
+<body class="admin-page">
+<div class="main-wrapper">
+<main class="content">
+<div class="page-header">
+    <div class="header-left">
+        <h2 class="page-title">Quản lý Sản phẩm</h2>
+    </div>
+    <div class="header-actions">
+        <button class="btn btn-primary" id="btn-add-product" onclick="productPage.openModal()">
+            <i class="bi bi-plus-lg" aria-hidden="true"></i> Thêm mới
+        </button>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <div class="search-box">
+            <i class="bi bi-search"></i>
+            <input type="text" id="search-product" placeholder="Tìm kiếm sản phẩm..." onkeyup="productPage.search()" class="control">
+        </div>
+        <div class="filter-box">
+            <select id="filter-status" onchange="productPage.search()" class="control">
+                <option value="all">Tất cả trạng thái</option>
+                <option value="active">Đang bán</option>
+                <option value="inactive">Ngừng bán</option>
+            </select>
+        </div>
+    </div>
+    <div class="card-body">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Ảnh</th>
+                    <th>Tên sản phẩm</th>
+                    <th>Danh mục</th>
+                    <th>Giá bán</th>
+                    <th>Tồn kho</th>
+                    <th>Trạng thái</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody id="product-table-body">
+                <!-- Data will be rendered here by JS -->
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal Thêm/Sửa Sản phẩm -->
+<dialog id="product-modal" class="form-dialog" aria-labelledby="modal-title">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 id="modal-title">Thêm Sản phẩm mới</h3>
+            <button type="button" class="close" aria-label="Đóng" onclick="productPage.closeModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form id="product-form" onsubmit="productPage.saveProduct(event)">
+                <input type="hidden" id="product-id">
+                <div class="form-group">
+                    <label>Tên sản phẩm</label>
+                    <input type="text" id="product-name" required>
+                </div>
+                <div class="form-group">
+                    <label>Danh mục</label>
+                    <select id="product-category">
+                        <option value="Đồ ăn">Đồ ăn</option>
+                        <option value="Nước uống">Nước uống</option>
+                        <option value="Combo">Combo</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Mô tả sản phẩm</label>
+                    <textarea id="product-desc" rows="3"></textarea>
+                </div>
+                <div class="form-group row">
+                    <div class="col">
+                        <label>Giá bán (VNĐ)</label>
+                        <input type="number" id="product-price" required min="0" step="1000">
+                    </div>
+                    <div class="col">
+                        <label>Số lượng tồn</label>
+                        <input type="number" id="product-stock" required min="0">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="product-image">Hình ảnh sản phẩm</label>
+                    <div id="product-image-drop" class="image-drop">
+                        <input type="file" id="product-image" accept="image/jpeg,image/png,image/gif" aria-describedby="product-image-help">
+                        <small id="product-image-help">Kéo thả ảnh vào đây hoặc chọn file. JPG, PNG hoặc GIF, tối đa 5MB.</small>
+                    </div>
+                    <img id="product-image-preview" class="product-img" alt="Ảnh sản phẩm xem trước" hidden>
+                </div>
+                <div class="form-group">
+                    <label>Trạng thái</label>
+                    <select id="product-status">
+                        <option value="active">Đang bán</option>
+                        <option value="inactive">Ngừng bán</option>
+                    </select>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="productPage.closeModal()">Hủy</button>
+                    <button type="submit" class="btn btn-primary">Lưu thông tin</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</dialog>
+</main>
+</div>
+<script src="../app.js?v=rooms-20261019"></script>
+<script src="../../shared-state.js?v=my-tickets-20261020"></script>
+<script src="./products.js"></script>
+<script src="../form-dialog.js"></script>
+</body>
+</html>

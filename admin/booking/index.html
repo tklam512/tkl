@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <link rel="icon" href="/assets/ucc/logo.png" type="image/png">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quản lý đặt vé</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../styles.css?v=admin-shell-20261019">
+  <link rel="stylesheet" href="./booking.css?v=rooms-20261019">
+</head>
+<body class="admin-page">
+<div class="main-wrapper">
+<main class="content">
+<section class="booking-page">
+    <header class="booking-header">
+      <h1>Danh sách vé</h1>
+      <div class="booking-header-actions">
+        <label class="booking-search">
+          <i class="bi bi-search" aria-hidden="true"></i>
+          <input id="bookingSearch" aria-label="Tìm đặt vé" type="search" placeholder="Tìm mã vé, khách hàng, phim…" autocomplete="off">
+        </label>
+
+      </div>
+    </header>
+    <div class="table-wrap">
+      <table>
+        <thead><tr>
+          <th scope="col">Mã đặt vé</th><th scope="col">Khách hàng</th>
+          <th scope="col">Phim</th><th scope="col">Phòng</th>
+          <th scope="col">Suất chiếu</th><th scope="col">Số ghế</th>
+          <th scope="col">Tổng tiền</th><th scope="col">Trạng thái vé</th>
+          <th scope="col">Thanh toán</th>
+        </tr></thead>
+        <tbody id="bookingRows"></tbody>
+      </table>
+      <p class="empty-state" id="bookingEmpty" hidden>Không tìm thấy đặt vé phù hợp.</p>
+    </div>
+  </section>
+</main>
+</div>
+<script src="../app.js?v=rooms-20261019"></script>
+<script src="../../shared-state.js?v=my-tickets-20261020"></script>
+<script src="./booking.js?v=live-bookings-20261020"></script>
+</body>
+</html>

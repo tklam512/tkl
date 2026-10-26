@@ -1,0 +1,93 @@
+body {
+    box-sizing: border-box;
+    margin: 0 auto;
+}
+
+main {
+    display: grid;
+    place-items: center;
+    width: 100%;
+    min-height: 100vh;
+}
+
+main > section {
+    width: 100%;
+}
+
+article
+{
+    background-color: var(--sidebar-bg);
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 0;
+    box-shadow: var(--shadow-sidebar);
+}
+
+div {
+    margin: 10px 0;
+}
+
+label {
+    display: inline-block;
+    padding: 5px 0;
+}
+
+select
+{
+    display: block;
+    width: 100%;
+    padding: 15px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background-color: var(--input-bg);
+    color: var(--text-muted);
+    min-width: 150px;
+}
+
+
+div.input
+{
+    display: inline-block;
+    width: calc(33.33% - 10px);
+}
+
+button#movieSubmit
+{
+    padding: 10px 20px;
+    border-radius: 4px;
+    background-color: var(--accent);
+    color: white;
+    font-weight: bold;
+    transition: var(--transition);
+}
+button#movieSubmit:hover
+{
+    background-color: var(--accent-hover);
+    transition: var(--transition);
+}
+
+button#movieReset
+{
+    background-color: var(--text-secondary);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+button#movieReset:hover
+{
+    background-color: var(--text-primary);
+    transition: var(--transition);
+}
+
+input
+{
+    padding: 10px;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    background-color: var(--input-bg);
+    color: var(--text-muted);
+    min-width: 150px;
+    width: 95%;
+}
