@@ -16,6 +16,9 @@ Trong Microsoft Word, giữ phím **Ctrl** rồi bấm vào tên câu hỏi tron
 3. [Thanh menu Trang chủ – Lịch chiếu – Giá vé – Giới thiệu dùng code nào?](#cau-3-menu)
 4. [Thanh tìm kiếm phim sử dụng và hoạt động như thế nào?](#cau-4-tim-kiem)
 5. [Vì sao suất đã qua giờ bị làm mờ và không bấm được?](#cau-5-suat-da-qua)
+6. [Ba tab Đang chiếu, Sắp chiếu và Tất cả phim thay đổi nội dung thế nào?](#cau-6-tabs)
+7. [Các điều kiện của form Register và Login được đặt ở đâu?](#cau-7-dieu-kien-auth)
+8. [Hai khu phim trên trang chủ, khoảng cách và hiệu ứng hover được tạo thế nào?](#cau-8-home-sections)
 
 ---
 
@@ -947,6 +950,833 @@ Nghiệp vụ: api.details() kiểm tra Date.now()
 
 ---
 
+# Câu hỏi 6 — Ba tab Đang chiếu, Sắp chiếu và Tất cả phim thay đổi nội dung thế nào? {#cau-6-tabs}
+
+## Câu hỏi nguyên văn
+
+> “Trong phần này các phần phim đang chiếu, sắp chiếu và tất cả phim nó có thể ấn được và thay đổi nội dung từng phần đó, vậy làm thế nào để ra được như thế?”
+
+## Trả lời
+
+Ba phần này là ba nút tab. Khi người dùng bấm một tab, JavaScript cập nhật biến `status`, đánh dấu nút đang chọn, gọi lại hàm `render()`, lọc danh sách phim và thay nội dung vùng kết quả mà không tải lại trang.
+
+## 1. Hàm quản lý trang phim
+
+Toàn bộ logic nằm trong hàm `movies()` tại `public.js`, dòng 204–240:
+
+```js
+function movies() {
+  const query = new URLSearchParams(location.search);
+  let status = ["soon", "all"].includes(query.get("status"))
+    ? query.get("status")
+    : "showing";
+
+  // Tạo ba tab và vùng kết quả
+  // ...
+
+  function render() {
+    // Lọc và dựng lại danh sách
+  }
+
+  // Gắn sự kiện click
+  // ...
+
+  render();
+}
+```
+
+## 2. Dữ liệu ba tab
+
+Tại `public.js`, dòng 210–212:
+
+```js
+[
+  ["showing", "Đang chiếu"],
+  ["soon", "Sắp chiếu"],
+  ["all", "Tất cả phim"]
+]
+```
+
+| `data-status` | Tên tab | Chức năng |
+|---|---|---|
+| `showing` | Đang chiếu | Chỉ phim đang chiếu |
+| `soon` | Sắp chiếu | Chỉ phim chưa đến ngày khởi chiếu |
+| `all` | Tất cả phim | Toàn bộ phim, kể cả phim đã kết thúc |
+
+Mảng được chuyển thành nút bằng `map()`:
+
+```js
+.map(
+  ([value, label]) => `<button
+    data-status="${value}"
+    aria-pressed="${status === value}">
+    ${label}
+  </button>`
+).join("")
+```
+
+Khi tab Tất cả phim được chọn, HTML có dạng:
+
+```html
+<button data-status="showing" aria-pressed="false">Đang chiếu</button>
+<button data-status="soon" aria-pressed="false">Sắp chiếu</button>
+<button data-status="all" aria-pressed="true">Tất cả phim</button>
+```
+
+## 3. Tab được chọn khi mở trang
+
+Tại `public.js`, dòng 206–207:
+
+```js
+const query = new URLSearchParams(location.search);
+
+let status = ["soon", "all"].includes(query.get("status"))
+  ? query.get("status")
+  : "showing";
+```
+
+- `/movies/` → mặc định `showing`.
+- `/movies/?status=soon` → mở `soon`.
+- `/movies/?status=all` → mở `all`.
+- Giá trị không hợp lệ → trở về `showing`.
+
+## 4. Sự kiện khi bấm tab
+
+Tại `public.js`, dòng 230–236:
+
+```js
+document.querySelectorAll("[data-status]").forEach(button => {
+  button.onclick = () => {
+    status = button.dataset.status;
+
+    document.querySelectorAll("[data-status]").forEach(
+      other => other.setAttribute(
+        "aria-pressed",
+        String(other === button)
+      )
+    );
+
+    render();
+  };
+});
+```
+
+Khi bấm Sắp chiếu:
+
+```js
+button.dataset.status // "soon"
+status = "soon";
+```
+
+Nút vừa bấm nhận `aria-pressed="true"`; hai nút còn lại nhận `false`. Sau đó `render()` chạy lại.
+
+## 5. Thuật toán phân loại phim
+
+Hàm nằm tại `shared-state.js`, dòng 730–741:
+
+```js
+function movieStatus(movie, date = today()) {
+  if (movie.date > date)
+    return "soon";
+
+  if (movie.showingThrough >= date)
+    return "showing";
+
+  const daysSinceRelease =
+    (Date.parse(date) - Date.parse(movie.date)) / 86400000;
+
+  return daysSinceRelease <= 21 ? "showing" : "ended";
+}
+```
+
+Luồng xử lý:
+
+```text
+Ngày khởi chiếu > hôm nay → soon
+showingThrough chưa qua     → showing
+Khởi chiếu chưa quá 21 ngày → showing
+Quá 21 ngày                 → ended
+```
+
+Phim `ended` chỉ xuất hiện khi chọn Tất cả phim.
+
+## 6. Lọc theo tab và ô tìm kiếm
+
+Trong `render()`, tại `public.js`, dòng 216–221:
+
+```js
+const keyword = input.value
+  .trim()
+  .toLocaleLowerCase("vi");
+
+const selected = cinemaState.movies.filter(
+  movie =>
+    (
+      status === "all" ||
+      cinemaState.movieStatus(movie) === status
+    ) &&
+    movie.title
+      .toLocaleLowerCase("vi")
+      .includes(keyword)
+).sort((a, b) => b.date.localeCompare(a.date));
+```
+
+Phim phải đồng thời đúng tab và chứa từ khóa tìm kiếm. Khi `status === "all"`, điều kiện trạng thái luôn đúng nên toàn bộ phim được giữ lại.
+
+## 7. Thay tiêu đề
+
+Tại `public.js`, dòng 223:
+
+```js
+document.querySelector("h1").textContent =
+  status === "soon"
+    ? "Phim sắp chiếu"
+    : status === "all"
+      ? "Tất cả phim"
+      : "Phim đang chiếu";
+```
+
+## 8. Thay danh sách mà không tải lại trang
+
+Tại dòng 225–227:
+
+```js
+document.getElementById("movie-results").innerHTML =
+  selected.length
+    ? selected.map(
+        movie => `<article class="schedule-film">...</article>`
+      ).join("")
+    : empty(
+        "Không tìm thấy phim phù hợp",
+        "Thử đổi tên phim hoặc chọn trạng thái khác."
+      );
+```
+
+Code chỉ thay `innerHTML` của `#movie-results`, nên trình duyệt không tải lại toàn bộ trang.
+
+## 9. CSS tab và gạch đỏ
+
+Tại `public.css`, dòng 532–551:
+
+```css
+.movie-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  margin: -16px 0 26px;
+}
+
+.movie-tabs button {
+  background: none;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  padding: 8px 4px;
+  font-size: 15px;
+  color: var(--muted);
+}
+
+.movie-tabs button[aria-pressed=true] {
+  color: var(--text);
+  border-color: var(--accent);
+}
+```
+
+`aria-pressed="true"` làm chữ sáng và đường viền dưới chuyển thành màu đỏ.
+
+## 10. Lần render đầu tiên
+
+Cuối hàm tại `public.js`, dòng 238–239:
+
+```js
+input.addEventListener("input", render);
+render();
+```
+
+`render()` được gọi ngay khi trang mở, sau đó được gọi lại khi người dùng bấm tab hoặc nhập từ khóa.
+
+[Quay lại mục lục](#muc-luc)
+
+---
+
+# Câu hỏi 7 — Các điều kiện của form Register và Login được đặt ở đâu? {#cau-7-dieu-kien-auth}
+
+## Câu hỏi nguyên văn
+
+> “Vậy các điều kiện ở phần đăng ký, đăng nhập, register và login đó thì điều kiện của các dòng được tạo ở đâu? Ví dụ như phần email phải có @gmail.com thì các điều kiện đó được đặt ở đâu?”
+
+## Trả lời
+
+Điều kiện của form được chia thành ba lớp: thuộc tính HTML được tạo trong `public.js`, validation JavaScript trước khi submit và kiểm tra nghiệp vụ trong `shared-state.js`.
+
+Code hiện tại **không bắt buộc email phải là `@gmail.com`**. Nó chấp nhận các tên miền email hợp lệ như Gmail, Outlook hoặc tên miền trường học.
+
+## 1. Hai trang dùng chung một hàm
+
+- `register/index.html`, dòng 15: `data-page="register"`.
+- `login/index.html`, dòng 15: `data-page="login"`.
+
+Tại `public.js`, dòng 415–416:
+
+```js
+else if (page === "login" || page === "register")
+  auth(page === "register");
+```
+
+Kết quả:
+
+```text
+Register → auth(true)
+Login    → auth(false)
+```
+
+## 2. Các trường của hai form
+
+Hàm `auth(register)` nằm tại `public.js`, dòng 296–400.
+
+| Trường | Register | Login |
+|---|---:|---:|
+| Họ và tên | Có | Không |
+| Số điện thoại | Có | Không |
+| Email | Có | Có |
+| Mật khẩu | Có | Có |
+| Nhập lại mật khẩu | Có | Không |
+| Điều khoản | Có | Không |
+
+## 3. Điều kiện họ và tên
+
+HTML được tạo tại `public.js`, dòng 302:
+
+```html
+<input name="fullName"
+  autocomplete="name"
+  maxlength="160"
+  placeholder="Nhập họ và tên"
+  required>
+```
+
+Tầng nghiệp vụ tại `shared-state.js`, dòng 1102–1112:
+
+```js
+const fullName = String(input.fullName || "")
+  .trim()
+  .replace(/\s+/g, " ");
+
+if (!fullName || fullName.length > 160)
+  throw new Error(
+    "Vui lòng nhập họ và tên, tối đa 160 ký tự."
+  );
+```
+
+## 4. Điều kiện số điện thoại
+
+HTML:
+
+```html
+<input name="phone"
+  type="tel"
+  autocomplete="tel"
+  pattern="[0-9+ ()-]{9,16}"
+  required>
+```
+
+Pattern cho phép chữ số, dấu `+`, khoảng trắng, ngoặc và gạch ngang; tổng chiều dài từ 9 đến 16 ký tự.
+
+Kiểm tra lại tại `shared-state.js`, dòng 1114–1115:
+
+```js
+if (
+  !/^[0-9+ ()-]{9,16}$/.test(phone) ||
+  phone.replace(/\D/g, "").length < 9
+)
+  throw new Error("Số điện thoại không hợp lệ.");
+```
+
+## 5. Điều kiện email trong HTML
+
+Tại `public.js`, dòng 302:
+
+```html
+<input id="email"
+  name="email"
+  maxlength="254"
+  type="email"
+  autocomplete="email"
+  placeholder="ten@example.com"
+  aria-describedby="email-error"
+  required>
+```
+
+- `required`: không được bỏ trống.
+- `type="email"`: trình duyệt kiểm tra định dạng email cơ bản.
+- `maxlength="254"`: tối đa 254 ký tự.
+- Không có điều kiện bắt buộc Gmail.
+
+## 6. Regex email
+
+Nằm tại `shared-state.js`, dòng 1035–1041:
+
+```js
+const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+const normalizeEmail = value =>
+  String(value || "").trim().toLowerCase();
+
+const isValidEmail = value =>
+  emailPattern.test(normalizeEmail(value)) &&
+  normalizeEmail(value).length <= 254;
+```
+
+Email phải có phần trước `@`, ký tự `@`, tên miền, dấu chấm và đuôi tên miền.
+
+Hợp lệ:
+
+```text
+an@gmail.com
+an@outlook.com
+an@utc.edu.vn
+a+b@sub.example.vn
+```
+
+Không hợp lệ:
+
+```text
+an
+an@
+an@gmail
+an gmail.com
+an@@gmail.com
+```
+
+Nếu muốn chỉ nhận Gmail, có thể đổi regex tại `shared-state.js:1039` thành:
+
+```js
+const emailPattern = /^[a-z0-9._%+-]+@gmail\.com$/i;
+```
+
+## 7. Hiển thị lỗi email
+
+Tại `public.js`, dòng 312–320:
+
+```js
+function validateEmail(showError) {
+  const message = !email.value.trim()
+    ? "Vui lòng nhập email."
+    : customerAuth.isValidEmail(email.value)
+      ? ""
+      : "Email chưa đúng định dạng, ví dụ: ten@example.com.";
+
+  email.setCustomValidity(message);
+
+  if (showError) {
+    emailError.textContent = message;
+    email.setAttribute(
+      "aria-invalid",
+      String(Boolean(message))
+    );
+  }
+}
+```
+
+Email được kiểm tra khi blur, khi nhập tiếp và khi phát sinh sự kiện `invalid` tại dòng 322–332.
+
+## 8. Điều kiện mật khẩu
+
+Hàm tạo input tại `public.js`, dòng 301:
+
+```html
+<input type="password"
+  minlength="8"
+  maxlength="128"
+  required>
+```
+
+Code hiện tại chỉ bắt buộc độ dài 8–128 ký tự; không bắt buộc chữ hoa, chữ số hoặc ký tự đặc biệt.
+
+Tầng nghiệp vụ tại `shared-state.js`, dòng 1120–1121:
+
+```js
+if (
+  typeof password !== "string" ||
+  password.length < 8 ||
+  password.length > 128
+)
+  throw new Error("Mật khẩu cần từ 8 đến 128 ký tự.");
+```
+
+## 9. Mật khẩu nhập lại
+
+Kiểm tra trên giao diện tại `public.js`, dòng 368–372:
+
+```js
+if (
+  confirm &&
+  confirm.value !== form.elements.namedItem("password").value
+) {
+  confirm.setCustomValidity("Mật khẩu nhập lại chưa khớp.");
+  confirm.reportValidity();
+  return;
+}
+```
+
+Tầng nghiệp vụ kiểm tra lại tại `shared-state.js`, dòng 1123–1124.
+
+## 10. Điều khoản sử dụng
+
+HTML:
+
+```html
+<input name="terms" type="checkbox" required>
+```
+
+Khi submit, code chuyển trạng thái checkbox thành boolean tại `public.js`, dòng 383–386. `shared-state.js`, dòng 1126–1127, yêu cầu giá trị phải đúng bằng `true`.
+
+## 11. Email không được trùng
+
+Tại `shared-state.js`, dòng 1129–1137:
+
+```js
+if (accounts().some(user => user.email === email))
+  throw new Error(
+    "Email đã được đăng ký. Vui lòng đăng nhập."
+  );
+```
+
+Email được `trim()` và chuyển thành chữ thường, nên `AN@GMAIL.COM` và `an@gmail.com` được xem là một email.
+
+## 12. Kiểm tra toàn form
+
+Tại `public.js`, dòng 356–372:
+
+```js
+event.preventDefault();
+validateEmail(true);
+
+if (!form.reportValidity())
+  return;
+```
+
+`reportValidity()` kiểm tra `required`, `maxlength`, `minlength`, `pattern`, `type="email"` và lỗi tùy chỉnh từ `setCustomValidity()`.
+
+## 13. Đăng ký và đăng nhập
+
+Tại `public.js`, dòng 380–390:
+
+```js
+const data = Object.fromEntries(new FormData(form));
+
+if (register)
+  await customerAuth.register({
+    ...data,
+    terms: form.elements.namedItem("terms").checked
+  });
+else
+  await customerAuth.login(data.email, data.password);
+```
+
+Nghiệp vụ đăng ký nằm tại `shared-state.js:1102–1152`; đăng nhập tại `shared-state.js:1155–1163`.
+
+## 14. Bảo vệ mật khẩu
+
+Hàm `hashPassword()` tại `shared-state.js`, dòng 1071–1086, dùng PBKDF2-SHA256 với 600.000 vòng và salt riêng. Hệ thống lưu `salt` và `passwordHash`, không lưu mật khẩu gốc.
+
+[Quay lại mục lục](#muc-luc)
+
+---
+
+# Câu hỏi 8 — Hai khu phim trên trang chủ, khoảng cách và hiệu ứng hover được tạo thế nào? {#cau-8-home-sections}
+
+## Câu hỏi nguyên văn
+
+> “Ở phần trang chủ đầu tiên, những cái này được làm như thế nào, nó được chia ra thành 2 phần như này kiểu gì, khoảng cách của các phim hay hiệu ứng khi trỏ chuột vào hình ảnh hay những phần hiện ra làm ở đâu, chỉ rõ chức năng và cách làm, chỉ rõ các dòng code.”
+
+## Trả lời
+
+Khu vực này gồm hai `<section>`: Phim đang chiếu và Phim sắp chiếu. JavaScript phân loại dữ liệu rồi dùng `movieCard()` tạo từng thẻ; CSS Grid tạo các cột và khoảng cách; CSS hover phóng ảnh và hiện nút Xem chi tiết.
+
+## 1. Lấy và phân loại phim
+
+Trong `public.js`, dòng 140–143:
+
+```js
+const movies = [...cinemaState.movies]
+  .sort((a, b) => b.date.localeCompare(a.date));
+
+const showing = movies.filter(
+  movie => cinemaState.movieStatus(movie) === "showing"
+);
+
+const soon = movies.filter(
+  movie => cinemaState.movieStatus(movie) === "soon"
+);
+```
+
+`showing` chứa phim đang chiếu; `soon` chứa phim chưa tới ngày khởi chiếu.
+
+## 2. Tạo hai section
+
+Tại `public.js`, dòng 157–158:
+
+```js
+<div class="container home-layout">
+  <div class="home-films">
+    <section>
+      ${sectionHeading("Phim đang chiếu", "/movies/")}
+      <div class="poster-grid">
+        ${showing.length
+          ? showing.slice(0, 8).map(movieCard).join("")
+          : empty("Chưa có phim đang chiếu", "Hãy quay lại để xem danh sách phim mới.")}
+      </div>
+    </section>
+
+    <section>
+      ${sectionHeading("Phim sắp chiếu", "/movies/?status=soon")}
+      <div class="poster-grid">
+        ${soon.length
+          ? soon.slice(0, 4).map(movieCard).join("")
+          : empty("Lịch phim sắp chiếu đang được cập nhật")}
+      </div>
+    </section>
+  </div>
+</div>
+```
+
+Phim đang chiếu lấy tối đa 8 phim; phim sắp chiếu lấy tối đa 4 phim.
+
+## 3. Xếp hai phần theo chiều dọc
+
+Tại `public.css`, dòng 350–355:
+
+```css
+.home-layout {
+  display: grid;
+  grid-template-columns: minmax(0,1fr);
+  padding-top: 54px;
+  padding-bottom: 64px;
+}
+```
+
+Lưới một cột làm hai section nằm lần lượt từ trên xuống dưới.
+
+Khoảng cách giữa chúng tại dòng 357–359:
+
+```css
+.home-films section + section {
+  margin-top: 50px;
+}
+```
+
+## 4. Tiêu đề và Xem tất cả
+
+Hàm `sectionHeading()` tại `public.js`, dòng 135–137:
+
+```js
+function sectionHeading(title, href = "") {
+  return `<div class="section-heading">
+    <h2>
+      <span class="section-dot" aria-hidden="true"></span>
+      ${title}
+    </h2>
+    ${href
+      ? `<a href="${href}">Xem tất cả <span aria-hidden="true">→</span></a>`
+      : ""}
+  </div>`;
+}
+```
+
+Phần Đang chiếu liên kết tới `/movies/`; phần Sắp chiếu liên kết tới `/movies/?status=soon`.
+
+CSS tiêu đề tại `public.css`, dòng 361–395:
+
+```css
+.section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 28px;
+}
+
+.section-dot {
+  width: 12px;
+  height: 12px;
+  background: var(--accent);
+  border-radius: 50%;
+}
+```
+
+`justify-content: space-between` đẩy tiêu đề sang trái và Xem tất cả sang phải. Liên kết đổi sang màu đỏ khi hover tại dòng 385–387.
+
+## 5. Lưới và khoảng cách giữa các phim
+
+Tại `public.css`, dòng 397–401:
+
+```css
+.poster-grid {
+  display: grid;
+  grid-template-columns: repeat(4,minmax(0,1fr));
+  gap: 32px 22px;
+}
+```
+
+- `repeat(4, ...)`: bốn phim mỗi hàng.
+- `32px`: khoảng cách giữa các hàng.
+- `22px`: khoảng cách giữa các cột.
+
+Nếu phần Sắp chiếu chỉ có hai phim, hai cột còn lại để trống nên xuất hiện vùng trống bên phải.
+
+## 6. Cấu trúc một thẻ phim
+
+Hàm `movieCard()` tại `public.js`, dòng 130–133:
+
+```js
+<article class="movie-card">
+  <a class="poster-link" href="${filmLink(movie)}">
+    <img src="${poster(movie)}" alt="Poster ${escape(movie.title)}">
+    <span class="format-badge">2D</span>
+    ${movie.age ? `<span class="age-badge">${escape(movie.age)}</span>` : ""}
+    <span class="poster-action">Xem chi tiết</span>
+  </a>
+
+  <div class="movie-meta">
+    <span>${escape(movie.genres?.slice(0, 2).join(", "))}</span>
+    <time datetime="${escape(movie.date)}">${dateText(movie.date)}</time>
+  </div>
+
+  <h3>
+    <a href="${filmLink(movie)}">${escape(movie.title)}</a>
+  </h3>
+</article>
+```
+
+Poster và tên phim đều dẫn tới `/movies/detail/?id=...`.
+
+## 7. Khung poster
+
+Tại `public.css`, dòng 407–421:
+
+```css
+.poster-link {
+  display: block;
+  position: relative;
+  overflow: hidden;
+  border-radius: 11px;
+  aspect-ratio: 2/3;
+  background: var(--surface);
+}
+
+.poster-link > img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform .3s ease;
+}
+```
+
+`aspect-ratio: 2/3` giữ tỉ lệ poster; `object-fit: cover` phủ kín khung; `overflow: hidden` cắt phần ảnh phóng ra ngoài.
+
+## 8. Hiệu ứng phóng ảnh
+
+Tại dòng 423–425:
+
+```css
+.poster-link:hover > img {
+  transform: scale(1.035);
+}
+```
+
+Khi rê chuột, ảnh tăng lên 103,5%. `transition: transform .3s ease` làm chuyển động mềm trong 0,3 giây.
+
+## 9. Nút Xem chi tiết xuất hiện khi hover
+
+Trạng thái ẩn tại `public.css`, dòng 447–460:
+
+```css
+.poster-action {
+  position: absolute;
+  bottom: 16px;
+  left: 50%;
+  transform: translate(-50%,8px);
+  opacity: 0;
+  white-space: nowrap;
+  background: var(--accent);
+  border-radius: 50px;
+  padding: 8px 16px;
+  transition: opacity .2s, transform .2s;
+}
+```
+
+Khi hover hoặc focus bàn phím, tại dòng 462–465:
+
+```css
+.poster-link:hover .poster-action,
+.poster-link:focus-visible .poster-action {
+  opacity: 1;
+  transform: translate(-50%,0);
+}
+```
+
+Nút vừa hiện dần từ `opacity: 0` lên `1`, vừa trượt lên 8px.
+
+## 10. Nhãn 2D và độ tuổi
+
+CSS chung tại `public.css`, dòng 427–445:
+
+```css
+.format-badge,.age-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  border-radius: 5px;
+  padding: 1px 6px;
+}
+
+.age-badge {
+  left: 10px;
+  right: auto;
+  background: #cf3535;
+}
+```
+
+Nhãn 2D ở góc trên phải; nhãn P/T18 ở góc trên trái và chỉ xuất hiện khi `movie.age` có dữ liệu.
+
+## 11. Thể loại, ngày và tên phim
+
+Tại `public.css`, dòng 467–492:
+
+```css
+.movie-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 10px;
+  margin: 12px 0 7px;
+}
+
+.movie-card h3 {
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+```
+
+`slice(0, 2)` chỉ lấy tối đa hai thể loại. Ngày được đổi từ `YYYY-MM-DD` sang `DD/MM/YYYY` bằng `dateText()` tại `public.js:15`.
+
+## 12. Responsive
+
+- Mặc định: bốn cột, `public.css:397–401`.
+- Tối đa 1280px: ba cột, `public.css:1026–1028`.
+- Tối đa 1023px: code hiện tại ghi đè thành bốn cột nhỏ, `public.css:1109–1111`.
+- Tối đa 640px: hai cột và `gap: 26px 16px`, `public.css:1244–1247`.
+
+## 13. Không có dữ liệu
+
+Hàm `empty()` tại `public.js`, dòng 34–36, tạo thông báo. CSS `public.css`, dòng 494–510, dùng `grid-column: 1/-1` để thông báo chiếm toàn bộ chiều rộng lưới.
+
+[Quay lại mục lục](#muc-luc)
+
+---
+
 # Bảng tra nhanh file và dòng code {#bang-tra-nhanh}
 
 | Nội dung | File và dòng |
@@ -968,5 +1798,18 @@ Nghiệp vụ: api.details() kiểm tra Date.now()
 | Kiểm tra suất đã qua | `public.js:190–202` |
 | CSS làm mờ | `public.css:1667–1686` |
 | Chặn URL suất cũ | `shared-state.js:1203–1219` |
+| Tạo ba tab trạng thái phim | `public.js:205–212` |
+| Sự kiện bấm tab | `public.js:230–236` |
+| Phân loại showing/soon/ended | `shared-state.js:730–741` |
+| Tạo form Register/Login | `public.js:296–302` |
+| Validation email trên giao diện | `public.js:307–332` |
+| Regex email | `shared-state.js:1039–1041` |
+| Điều kiện đăng ký | `shared-state.js:1102–1152` |
+| Điều kiện đăng nhập | `shared-state.js:1155–1163` |
+| Tạo hai khu phim trang chủ | `public.js:140–158` |
+| Tạo một thẻ phim | `public.js:130–133` |
+| Lưới và khoảng cách poster | `public.css:397–401` |
+| Hover phóng ảnh | `public.css:416–425` |
+| Hover hiện Xem chi tiết | `public.css:447–465` |
 
 [Quay lại mục lục](#muc-luc)
